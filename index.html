@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Text Replacer - AI-Powered Text Editing</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fontfaceobserver/2.3.0/fontfaceobserver.standalone.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Hero Section -->
+        <header class="hero-section">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span>✨ AI-Powered</span>
+                </div>
+                <h1 class="hero-title">Image Text Replacer</h1>
+                <p class="hero-subtitle">Transform text in images instantly with invisible, professional-quality editing</p>
+                <div class="hero-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">🎯</div>
+                        <span>Precise Detection</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <span>Lightning Fast</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔮</div>
+                        <span>Invisible Editing</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="section-header">
+                    <h2>Get Started</h2>
+                    <p>Upload your image to begin text detection and replacement</p>
+                </div>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <div class="upload-visual">
+                            <div class="upload-icon-wrapper">
+                                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7,10 12,5 17,10"></polyline>
+                                    <line x1="12" y1="5" x2="12" y2="15"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3>Drop your image here</h3>
+                        <p>or click to browse files</p>
+                        <div class="upload-formats">
+                            <span>Supports: JPG, PNG, WEBP</span>
+                        </div>
+                        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                        <button type="button" class="upload-btn" onclick="document.getElementById('imageInput').click()">
+                            <span>Choose Image</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="upload-controls">
+                    <button id="detectTextBtn" class="btn btn-primary" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 18l6-6-6-6"></path>
+                        </svg>
+                        Detect Text
+                    </button>
+                </div>
+            </section>
+
+            <!-- Canvas Section -->
+            <section class="canvas-section" id="canvasSection" style="display: none;">
+                <div class="section-header">
+                    <h2>Edit Your Image</h2>
+                    <p>Click on any detected text to replace it seamlessly</p>
+                </div>
+                
+                <div class="editor-interface">
+                    <div class="canvas-wrapper">
+                        <canvas id="imageCanvas"></canvas>
+                        <div id="boundingBoxes" class="bounding-boxes"></div>
+                    </div>
+                    
+                    <div class="editor-toolbar">
+                        <button id="downloadBtn" class="toolbar-btn secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7,10 12,15 17,10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>Download</span>
+                        </button>
+                        <button id="resetBtn" class="toolbar-btn tertiary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="1,4 1,10 7,10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                            <span>Start Over</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>© 2025 Image Text Replacer. Professional text editing made simple.</p>
+            </div>
+        </footer>
+
+        <!-- Text Replacement Modal -->
+        <div id="replaceModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3>Replace Text</h3>
+                <p>Original: <span id="originalText"></span></p>
+                <div class="input-group">
+                    <label for="replacementText">New text:</label>
+                    <input type="text" id="replacementText" placeholder="Enter replacement text">
+                </div>
+                <div class="modal-actions">
+                    <button id="confirmReplace" class="btn btn-primary">Replace</button>
+                    <button id="cancelReplace" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p>Processing image...</p>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <div class="error-content">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                <p id="errorText"></p>
+                <button id="dismissError" class="btn btn-small">Dismiss</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
